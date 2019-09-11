@@ -6,6 +6,7 @@
         /* Add padding to containers */
         .container {
             padding: 16px;
+
         }
 
         /* Full-width input fields */
@@ -66,14 +67,14 @@
        <li>After submission, the page should be redirect to new page.</li>
        <li>The new page should display, "Hello (username)" </li>
 </ul>
-<form>
+<form action="" method="post">
     <div class="container">
         <h1>Register</h1>
         <p>Please fill in this form to create an account.</p>
         <hr>
 
-        <label for="email"><b>Email</b></label>
-        <input type="text" placeholder="Enter Email" name="email" required>
+        <label for="username"><b>Username</b></label>
+        <input type="text" placeholder="Username" name="username" required>
 
         <label for="psw"><b>Password</b></label>
         <input type="password" placeholder="Enter Password" name="psw" required>
@@ -81,7 +82,7 @@
         <label for="psw-repeat"><b>Repeat Password</b></label>
         <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
 
-        <label for="email"><b>Email</b></label>
+        <label for="Email"><b>Email</b></label>
         <input type="text" placeholder="Email" name="email" required>
 
         <label for="phone-number"><b>Phone Number</b></label>
@@ -89,7 +90,7 @@
         <hr>
 
         <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
-        <button type="submit" class="registerbtn">Register</button>
+        <button name="submit" type="submit" class="registerbtn">Register</button>
     </div>
 
     <div class="container signin">
@@ -99,4 +100,42 @@
 </body>
 <?php
 
-
+    // create database myapplication;
+    // use myapplication;
+    // create table users(id int Primary key auto_increment, username varchar(30), password varchar(30), repassword varchar(30), email varchar(30), phone_number int);
+    
+    
+    session_start();
+    require "db.php"; 
+  
+    if(isset($_POST['submit'])){
+      
+      $username = $_POST['username'];
+      $email = $_POST['email'];
+      $psw = $_POST['psw'];
+      $psw_repeat = $_POST['psw-repeat'];
+      $phone_number = $_POST['phone-number'];
+      $massage = "";
+  
+      if(!empty($email) && !empty($psw) && !empty($psw_repeat) && !empty($username) && !empty($phone_number)){
+        if ($psw != $psw_repeat){
+          $massage = "Passwords do not match, Try Again";
+        }
+        else {
+        $sql = "INSERT INTO users (username, password, repassword, email, phone_number)
+                VALUES ('$username','$psw','$psw_repeat','$email','$phone_number')"; 
+  
+        if ($conn->exec($sql)){
+          $_SESSION['username'] = $username;
+          header("Location: hello.php");
+        }
+        else{
+          $massage = "Username or Email is Already Registered";        
+        }
+      }
+    }
+    else{
+      $massage = "All Field Required";
+    }
+  }
+?>
